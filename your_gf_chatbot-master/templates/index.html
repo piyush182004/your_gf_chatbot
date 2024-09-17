@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Only AI Girlfriend</title>
+    <link rel="stylesheet" href="/static/style.css">  
+</head>
+<body>
+    <div class="chat-container">
+        <h1>Your Only AI Girlfriend</h1>
+        <div class="chat-box" id="chat-box">
+            <div class="message bot-message">Hi, I'm Jennifer! Let's chat 😘</div>
+        </div>
+        <div class="input-box">
+            <input type="text" id="user-input" placeholder="Type your message...">
+            <button onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+
+    <script>
+        function sendMessage() {
+            var userInput = document.getElementById("user-input").value;
+            var chatBox = document.getElementById("chat-box");
+    
+            if (userInput.trim() !== "") {
+                // Display user message
+                var userMessage = document.createElement("div");
+                userMessage.classList.add("message", "user-message");
+                userMessage.innerHTML = userInput;
+                chatBox.appendChild(userMessage);
+    
+                // Clear the input field
+                document.getElementById("user-input").value = "";
+    
+                // Send the user message to the server
+                fetch('/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ message: userInput })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    // Display bot response
+                    var botMessage = document.createElement("div");
+                    botMessage.classList.add("message", "bot-message");
+                    botMessage.innerHTML = data.response;
+                    chatBox.appendChild(botMessage);
+    
+                    // Scroll chat to the bottom
+                    chatBox.scrollTop = chatBox.scrollHeight;
+                });
+            }
+        }
+    
+        // Add event listener for Enter key
+        document.getElementById("user-input").addEventListener("keypress", function(event) {
+            if (event.key === "Enter") {
+                event.preventDefault();  // Prevent the default action (e.g., form submission)
+                sendMessage();
+            }
+        });
+    </script>    
+</body>
+</html>
